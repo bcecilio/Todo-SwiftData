@@ -21,13 +21,17 @@ struct ContentView: View {
                     saveTodoItem()
                 }
 
-            List(todoItems) { todoItem in
-                Text(todoItem.title)
+            List {
+                ForEach(todoItems) { item in
+                    Text(item.title)
+                }
+                .onDelete(perform: deleteTodoItem)
             }
         }
         .padding()
     }
 
+    // TODO: Move this to a view model
     private func saveTodoItem() {
         // create the item
         let item = TodoItem(title: title)
@@ -35,6 +39,13 @@ struct ContentView: View {
         context.insert(item)
 
         title = ""
+    }
+
+    // TODO: Move this to a view model
+    private func deleteTodoItem(offsets: IndexSet) {
+        for index in offsets {
+            context.delete(todoItems[index])
+        }
     }
 }
 
