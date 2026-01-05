@@ -13,43 +13,32 @@ struct ContentView: View {
     @Query private var todoItems: [TodoItem] = []
     @State private var title: String = ""
 
+    @State var viewModel: TodoViewModel
+
+    init(context: ModelContext) {
+        self.viewModel = TodoViewModel(modelContext: context)
+    }
+
     var body: some View {
         VStack {
             TextField("Enter Item Title", text: $title)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit {
-                    saveTodoItem()
+                    viewModel.saveTodoItem(title: title)
                 }
 
             List {
                 ForEach(todoItems) { item in
                     Text(item.title)
                 }
-                .onDelete(perform: deleteTodoItem)
+                .onDelete { indexSet in
+                    viewModel.deleteTasks(offsets: indexSet, from: todoItems)
+                }
             }
         }
         .padding()
-    }
-
-    // TODO: Move this to a view model
-    private func saveTodoItem() {
-        // create the item
-        let item = TodoItem(title: title)
-        // save the item
-        context.insert(item)
-
-        title = ""
-    }
-
-    // TODO: Move this to a view model
-    private func deleteTodoItem(offsets: IndexSet) {
-        for index in offsets {
-            context.delete(todoItems[index])
+        .onAppear {
+            viewModel = TodoViewModel(modelContext: context)
         }
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: TodoItem.self, inMemory: true)
 }
