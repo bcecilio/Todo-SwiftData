@@ -9,14 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var context
     @Query private var todoItems: [TodoItem] = []
     @State private var title: String = ""
-
     @State var viewModel: TodoViewModel
 
-    init(context: ModelContext) {
-        self.viewModel = TodoViewModel(modelContext: context)
+    init(container: ModelContainer) {
+        self.viewModel = TodoViewModel(modelContainer: container)
     }
 
     var body: some View {
@@ -25,6 +23,7 @@ struct ContentView: View {
                 .textFieldStyle(.roundedBorder)
                 .onSubmit {
                     viewModel.saveTodoItem(title: title)
+                    title = ""
                 }
 
             List {
@@ -37,8 +36,5 @@ struct ContentView: View {
             }
         }
         .padding()
-        .onAppear {
-            viewModel = TodoViewModel(modelContext: context)
-        }
     }
 }

@@ -25,7 +25,7 @@ struct Todo_SwiftDataApp: App {
     var body: some Scene {
         WindowGroup {
             // Pass the context from the container directly to the View's init
-            ContentView(context: container.mainContext)
+            ContentView(container: container)
         }
         // Still apply the modifier so @Query works inside the View
         .modelContainer(container)
